@@ -39,17 +39,21 @@ afterAll(async () => {
 });
 
 describe('Gestão de imagens', () => {
-    test('Deve cadastrar uma imagem com sucesso', () => {
+    test('Deve salvar uma imagem com sucesso na pasta /media', () => {
         const imagePath = path.join(__dirname, './assets/example.jpg');
-        const imageBuffer = fs.readFileSync(imagePath);
 
         return request.post('/image')
             .set('Authorization', `Bearer ${userMaster.token}`)
-            .set('Content-Type', 'image/jpeg')
-            .send(imageBuffer)
+            .attach('image', imagePath)
             .then(res => {
                 expect(res.statusCode).toEqual(200);
-                expect(res.body.filename).toBeDefined();
+                expect(res.body.imageUrl).toBeDefined();
+
+                const { imageUrl } = res.body;
+
+                // verificar se a imagem foi salva na pasta media
+                const savedImagePath = path.join(__dirname, '../' + imageUrl);
+                expect(fs.existsSync(savedImagePath)).toBe(true);
             })
             .catch(err => {
                 throw new Error(err);

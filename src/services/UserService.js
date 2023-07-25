@@ -75,7 +75,7 @@ class UserService {
                 if (bcrypt.compareSync(password, user.password)) {
                     const MONTH = 30 * 24 * 60 * 60;
 
-                    jwt.sign({email}, secret, {expiresIn: MONTH}, (err, token) => {
+                    jwt.sign({id: user._id, email}, secret, {expiresIn: MONTH}, (err, token) => {
                         if (err) {
                             console.log(err);
                             res.sendStatus(500);
