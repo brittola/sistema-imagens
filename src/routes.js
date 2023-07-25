@@ -23,7 +23,7 @@ router.post('/user', UserService.create);
 
 router.post('/auth', UserService.auth);
 
-router.post('/image', loginAuth, upload.single('image'), ImageService.create);
+router.post('/image', upload.single('image'), loginAuth, ImageService.create);
 
 router.delete('/user/:email', UserService.delete);
 
