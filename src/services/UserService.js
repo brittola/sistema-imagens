@@ -2,7 +2,7 @@ const User = require("../models/User");
 const bcrypt = require('bcrypt');
 
 const jwt = require('jsonwebtoken');
-const secret = '13q94867bt2349568yq3[]-457609nw[4p57ion2[4w50u7y2pew9m45u6m';
+const secret = require('../jwt/secret');
 
 class UserService {
     create = async (req, res) => {
