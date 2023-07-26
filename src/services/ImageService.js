@@ -1,5 +1,6 @@
 const Image = require('../models/Image');
 const path = require('path');
+const fs = require('fs');
 
 class ImageService {
     create = async (req, res) => {
@@ -40,6 +41,36 @@ class ImageService {
             // junta o caminho da pasta /media com o nome da imagem e envia como resposta
             const imagePath = path.join(mediaPath, image.filename);
             res.sendFile(imagePath);
+        } catch(err) {
+            console.log(err);
+            res.sendStatus(500);
+        }
+    }
+    delete = async(req, res) => {
+        const imageId = req.params.id;
+        const {userId} = req.body;
+
+        try {
+            // deleta imagem apenas se ela tiver sido enviada pelo usuário logado
+            const deleted = await Image.findOneAndDelete({_id: imageId, uploadedBy: userId});
+
+            if (!deleted) {
+                res.sendStatus(400);
+                return;
+            }
+
+            // se a imagem tiver sido deletada do banco de dados, deleta ela da pasta "media"
+            const filePath = path.join(__dirname, '../media/' + deleted.filename);
+
+            fs.unlink(filePath, err => {
+                if (err) {
+                    console.log(err);
+                    res.sendStatus(500);
+                } else {
+                    res.sendStatus(200);
+                }
+            });
+
         } catch(err) {
             console.log(err);
             res.sendStatus(500);

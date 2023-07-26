@@ -27,6 +27,8 @@ router.post('/image', upload.single('image'), loginAuth, ImageService.create);
 
 router.get('/image/:id', ImageService.get);
 
+router.delete('/image/:id', loginAuth, ImageService.delete);
+
 router.delete('/user/:email', UserService.delete);
 
 module.exports = router;
