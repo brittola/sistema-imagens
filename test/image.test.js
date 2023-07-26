@@ -69,12 +69,42 @@ describe('Gestão de imagens', () => {
                 expect(res.statusCode).toEqual(200);
                 expect(res.body.imageUrl).toBeDefined();
 
+                // a url da imagem vem com o endereço do servidor + id, basta separar o id para fazer a requisição teste
                 const imageId = res.body.imageUrl.split('/').pop();
 
                 return request.get('/image/' + imageId)
                     .then(res => {
                         expect(res.statusCode).toEqual(200);
                         expect(res.type).toBe('image/jpeg');
+                    })
+                    .catch(err => {
+                        throw new Error(err);
+                    })
+            })
+            .catch(err => {
+                throw new Error(err);
+            })
+    });
+    test('Deve deletar imagem com sucesso', () => {
+        const imagePath = path.join(__dirname, './assets/example.jpg');
+
+        return request.post('/image')
+            .set('Authorization', `Bearer ${userMaster.token}`)
+            .attach('image', imagePath)
+            .then(res => {
+                expect(res.statusCode).toEqual(200);
+                expect(res.body.imageUrl).toBeDefined();
+
+                const imageId = res.body.imageUrl.split('/').pop();
+                const {filename} = res.body;
+
+                return request.delete('/image/' + imageId)
+                    .set('Authorization', `Bearer ${userMaster.token}`)
+                    .then(res => {
+                        expect(res.statusCode).toEqual(200);
+                        
+                        const deletedImagePath = path.join(__dirname, '../src/media/' + filename);
+                        expect(fs.existsSync(deletedImagePath)).toBe(false);
                     })
                     .catch(err => {
                         throw new Error(err);
