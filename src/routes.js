@@ -6,14 +6,13 @@ const loginAuth = require('./middlewares/loginAuth');
 const path = require('path');
 const multer = require('multer');
 const storage = multer.diskStorage({
-    destination: 'src/media',
+    destination: path.join(__dirname, '/media'),
     filename: (req, file, cb) => {
         const originalExt = path.extname(file.originalname);
         cb(null, Date.now() + originalExt);
     },
 });
 const upload = multer({ storage });
-
 
 router.get('/', (req, res) => {
     res.sendStatus(200);
