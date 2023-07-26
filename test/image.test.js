@@ -49,11 +49,36 @@ describe('Gestão de imagens', () => {
                 expect(res.statusCode).toEqual(200);
                 expect(res.body.imageUrl).toBeDefined();
 
-                const { imageUrl } = res.body;
+                const { filename } = res.body;
 
                 // verificar se a imagem foi salva na pasta media
-                const savedImagePath = path.join(__dirname, '../' + imageUrl);
+                const savedImagePath = path.join(__dirname, '../src/media/' + filename);
                 expect(fs.existsSync(savedImagePath)).toBe(true);
+            })
+            .catch(err => {
+                throw new Error(err);
+            })
+    });
+    test('Deve retornar um arquivo de imagem ao receber id pelo link', () => {
+        const imagePath = path.join(__dirname, './assets/example.jpg');
+
+        return request.post('/image')
+            .set('Authorization', `Bearer ${userMaster.token}`)
+            .attach('image', imagePath)
+            .then(res => {
+                expect(res.statusCode).toEqual(200);
+                expect(res.body.imageUrl).toBeDefined();
+
+                const imageId = res.body.imageUrl.split('/').pop();
+
+                return request.get('/image/' + imageId)
+                    .then(res => {
+                        expect(res.statusCode).toEqual(200);
+                        expect(res.type).toBe('image/jpeg');
+                    })
+                    .catch(err => {
+                        throw new Error(err);
+                    })
             })
             .catch(err => {
                 throw new Error(err);
