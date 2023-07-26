@@ -71,7 +71,7 @@ class UserService {
         try {
             const user = await User.findOne({email});
 
-            if (user) {
+            if (user && password) {
                 if (bcrypt.compareSync(password, user.password)) {
                     const MONTH = 30 * 24 * 60 * 60;
 
@@ -88,7 +88,7 @@ class UserService {
                     res.sendStatus(401);
                 }
             } else {
-                res.sendStatus(401);
+                res.sendStatus(400);
             }
         } catch(err) {
             console.log(err);
