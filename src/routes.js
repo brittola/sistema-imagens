@@ -3,16 +3,7 @@ const router = express.Router();
 const UserService = require('./services/UserService');
 const ImageService = require('./services/ImageService');
 const loginAuth = require('./middlewares/loginAuth');
-const path = require('path');
-const multer = require('multer');
-const storage = multer.diskStorage({
-    destination: path.join(__dirname, '/media'),
-    filename: (req, file, cb) => {
-        const originalExt = path.extname(file.originalname);
-        cb(null, Date.now() + originalExt);
-    },
-});
-const upload = multer({ storage });
+const { upload, handleMulterError } = require('./multerConfig');
 
 router.get('/', (req, res) => {
     res.sendStatus(200);
@@ -22,7 +13,7 @@ router.post('/user', UserService.create);
 
 router.post('/auth', UserService.auth);
 
-router.post('/image', loginAuth, upload.single('image'), ImageService.create);
+router.post('/image', loginAuth, upload.single('image'), handleMulterError, ImageService.create);
 
 router.get('/image/:id', ImageService.get);
 
