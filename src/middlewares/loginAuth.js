@@ -8,7 +8,8 @@ const loginAuth = (req, res, next) => {
         if (err) {
             res.sendStatus(401);
         } else {
-            req.body.userId = decodedToken.id;
+            // salvando em req.body não estava chegando ao ImageService
+            res.locals.userId = decodedToken.id;
             next();
         }
     });

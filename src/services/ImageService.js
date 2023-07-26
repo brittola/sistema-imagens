@@ -12,7 +12,7 @@ class ImageService {
                 return;
             }
     
-            const newImage = new Image({filename: req.file.filename, uploadedBy: req.body.userId});
+            const newImage = new Image({filename: req.file.filename, uploadedBy: res.locals.userId});
             const savedImage = await newImage.save();
     
             // devolve a url de visualização para ser compartilhada
