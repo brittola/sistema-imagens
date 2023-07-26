@@ -44,6 +44,8 @@ No banco de dados, é salvo o nome da imagem gerado no processo de salvamento + 
 
 **Respostas**
 - Status 401 caso o JWT seja inválido;
+- Status 406 + JSON com mensagem de erro caso tipo de arquivo não seja aceito.
+<br/>Os arquivos de imagem aceitos são '.jpg', '.jpeg', '.png', '.gif' e '.webp'.
 - Status 400 caso imagem não seja enviada;
 - Status 200 + JSON com url de compartilhamento da imagem e nome do arquivo salvo (para testes).
 
