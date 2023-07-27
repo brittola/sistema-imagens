@@ -68,10 +68,15 @@ class UserService {
     auth = async (req, res) => {
         const {email, password} = req.body;
 
+        if (email === undefined || password === undefined) {
+            res.sendStatus(400);
+            return;
+        }
+
         try {
             const user = await User.findOne({email});
 
-            if (user && password) {
+            if (user) {
                 if (bcrypt.compareSync(password, user.password)) {
                     const MONTH = 30 * 24 * 60 * 60;
 

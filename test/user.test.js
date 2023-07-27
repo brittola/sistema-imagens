@@ -110,7 +110,7 @@ describe('Autenticação de usuário', () => {
         return request.post('/auth')
             .send({email: 'emailnaocadastrado@teste', password: '1252034958'})
             .then(res => {
-                expect(res.statusCode).toEqual(401);
+                expect(res.statusCode).toEqual(400);
             })
             .catch(err => {
                 throw new Error(err);

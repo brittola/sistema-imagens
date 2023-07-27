@@ -48,7 +48,7 @@ class ImageService {
     }
     delete = async(req, res) => {
         const imageId = req.params.id;
-        const {userId} = req.body;
+        const {userId} = res.locals;
 
         try {
             // deleta imagem apenas se ela tiver sido enviada pelo usuário logado

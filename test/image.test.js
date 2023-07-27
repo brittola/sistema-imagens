@@ -1,6 +1,8 @@
 const app = require('../src/app');
+let server;
 const supertest = require('supertest');
-const request = supertest(app);
+// passando a instância do express, o teste 'Deve retornar erro ao receber arquivo que não é imagem' não estava executando corretamente
+const request = supertest('http://localhost:8080');
 const fs = require('fs');
 const path = require('path');
 
@@ -12,6 +14,10 @@ const userMaster = {
 }
 
 beforeAll(() => {
+    server = app.listen(8080, () => {
+        console.log('Servidor rodando para testes');
+    });
+
     return request.post('/user')
         .send(userMaster)
         .then(res => {
@@ -29,12 +35,16 @@ beforeAll(() => {
         })
 });
 
-afterAll(async () => {
+afterAll(() => {
     return request.delete('/user/' + userMaster.email)
         .then(res => {})
         .catch(err => {
             console.log(err);
         })
+        .finally(() => {
+            server.close();     
+        })
+
 
 });
 
@@ -54,6 +64,20 @@ describe('Gestão de imagens', () => {
                 // verificar se a imagem foi salva na pasta media
                 const savedImagePath = path.join(__dirname, '../src/media/' + filename);
                 expect(fs.existsSync(savedImagePath)).toBe(true);
+            })
+            .catch(err => {
+                throw new Error(err);
+            })
+    });
+    test('Deve retornar erro ao receber arquivo que não é imagem', () => {
+        const filePath = path.join(__dirname, './assets/example.txt');
+
+        return request.post('/image')
+            .set('Authorization', `Bearer ${userMaster.token}`)
+            .attach('image', filePath)
+            .then(res => {
+                console.log(res.statusCode);
+                expect(res.statusCode).toEqual(406);
             })
             .catch(err => {
                 throw new Error(err);
